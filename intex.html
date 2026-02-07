@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>For My Eternal Valentine</title>
+
+<style>
+:root {
+    --pink-glow: #ff4d6d;
+    --deep-red: #c9184a;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: radial-gradient(circle, #ffe3e3 0%, #ffb3c1 100%);
+    font-family: Georgia, serif;
+    overflow: hidden;
+    text-align: center;
+}
+
+/* Floating background */
+.roses-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.container {
+    background: rgba(255,255,255,0.9);
+    padding: 3rem;
+    border-radius: 30px;
+    box-shadow: 0 15px 40px rgba(201, 24, 74, 0.2);
+    max-width: 520px;
+    z-index: 10;
+    margin: 1rem;
+}
+
+h1 {
+    color: var(--deep-red);
+    font-size: 2.6rem;
+    margin-bottom: 1rem;
+}
+
+p {
+    color: #590d22;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 15px 38px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s;
+    border: none;
+}
+
+#yes-btn {
+    background: var(--pink-glow);
+    color: white;
+    box-shadow: 0 0 18px rgba(255,77,109,0.4);
+}
+
+#yes-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px var(--pink-glow);
+}
+
+#no-btn {
+    background: white;
+    color: var(--pink-glow);
+    border: 2px solid var(--pink-glow);
+    box-shadow: 0 0 12px rgba(255,77,109,0.25);
+    position: relative;
+    transition: left 0.35s ease, top 0.35s ease;
+    white-space: nowrap;
+}
+
+#no-btn::after {
+    content: "😌";
+    position: absolute;
+    right: -18px;
+    top: -12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+#no-btn:hover::after {
+    opacity: 1;
+}
+
+.success-msg {
+    display: none;
+    color: var(--deep-red);
+    animation: heartBeat 1.4s infinite;
+    text-align: center;
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Mobile tweaks */
+@media (max-width: 600px) {
+    h1 { font-size: 2.1rem; }
+    p { font-size: 1.1rem; }
+    button { font-size: 1.1rem; padding: 14px 32px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="roses-bg" id="roses"></div>
+
+<div class="container" id="main-card">
+    <h1>To My Beautiful Wife…</h1>
+    <p>
+        You are the rose that never fades in the garden of my life.  
+        Every heartbeat of mine belongs to you.
+        <br><br>
+        <strong>Will you be my Valentine forever?</strong>
+    </p>
+
+    <div class="btn-container">
+        <button id="yes-btn" onclick="celebrate()">YES</button>
+        <button id="no-btn">NO</button>
+    </div>
+</div>
+
+<div id="celebration" class="success-msg">
+    <h1>Forever Yours ❤️</h1>
+    <p>You’ve made me the happiest person alive.</p>
+</div>
+
+<script>
+/* Floating roses */
+const roseContainer = document.getElementById('roses');
+const emojis = ['🌹','❤️','💖','🌸'];
+
+for (let i = 0; i < 35; i++) {
+    const e = document.createElement('div');
+    e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    e.style.position = 'absolute';
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.top = Math.random() * 100 + 'vh';
+    e.style.fontSize = (20 + Math.random() * 18) + 'px';
+    e.style.opacity = '0.3';
+    roseContainer.appendChild(e);
+}
+
+/* Gentle teasing NO button */
+const noBtn = document.getElementById('no-btn');
+
+function moveNoButton(x, y) {
+    const rect = noBtn.getBoundingClientRect();
+    const angle = Math.atan2(
+        rect.top + rect.height / 2 - y,
+        rect.left + rect.width / 2 - x
+    );
+
+    const distance = 70;
+    let newX = rect.left + Math.cos(angle) * distance;
+    let newY = rect.top + Math.sin(angle) * distance;
+
+    const margin = 12;
+    const maxX = window.innerWidth - rect.width - margin;
+    const maxY = window.innerHeight - rect.height - margin;
+
+    newX = Math.max(margin, Math.min(newX, maxX));
+    newY = Math.max(margin, Math.min(newY, maxY));
+
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = `${newX}px`;
+    noBtn.style.top = `${newY}px`;
+}
+
+/* Desktop */
+document.addEventListener('mousemove', e => {
+    const r = noBtn.getBoundingClientRect();
+    const d = Math.hypot(
+        e.clientX - (r.left + r.width / 2),
+        e.clientY - (r.top + r.height / 2)
+    );
+    if (d < 120) moveNoButton(e.clientX, e.clientY);
+});
+
+/* Mobile */
+noBtn.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    moveNoButton(t.clientX, t.clientY);
+});
+
+/* Celebration */
+function celebrate() {
+    document.getElementById('main-card').style.display = 'none';
+    const c = document.getElementById('celebration');
+    c.style.display = 'block';
+
+    for (let i = 0; i < 80; i++) {
+        setTimeout(() => {
+            const rose = document.createElement('div');
+            rose.textContent = '🌹';
+            rose.style.position = 'fixed';
+            rose.style.left = Math.random() * 100 + 'vw';
+            rose.style.top = '110vh';
+            rose.style.fontSize = '2rem';
+            rose.style.transition = '3s ease-in';
+            document.body.appendChild(rose);
+
+            setTimeout(() => {
+                rose.style.top = '-10vh';
+                rose.style.transform =
+                    `translateX(${(Math.random()-0.5)*200}px) rotate(360deg)`;
+            }, 50);
+        }, i * 40);
+    }
+}
+</script>
+
+</body>
+</html>
